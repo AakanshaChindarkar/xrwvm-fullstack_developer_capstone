@@ -7,7 +7,6 @@
 # from django.contrib.auth import logout
 # from django.contrib import messages
 # from datetime import datetime
-from .restapis import get_request, analyze_review_sentiments, post_review
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 import logging
@@ -15,6 +14,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 # from .populate import initiate
 from .models import CarMake, CarModel
+from .restapis import get_request, analyze_review_sentiments, post_review
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -113,6 +113,7 @@ def add_review(request):
     else:
         return JsonResponse({"status":403,"message":"Unauthorized"})
 # ...
+#Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
 def get_dealerships(request, state="All"):
     if(state == "All"):
         endpoint = "/fetchDealers"
@@ -120,6 +121,8 @@ def get_dealerships(request, state="All"):
         endpoint = "/fetchDealers/"+state
     dealerships = get_request(endpoint)
     return JsonResponse({"status":200,"dealers":dealerships})
+
+
 def get_dealer_details(request, dealer_id):
     if(dealer_id):
         endpoint = "/fetchDealer/"+str(dealer_id)
