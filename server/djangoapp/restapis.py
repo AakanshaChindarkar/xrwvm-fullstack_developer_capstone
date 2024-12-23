@@ -2,6 +2,7 @@
 # import requests
 import os
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -11,15 +12,7 @@ sentiment_analyzer_url = os.getenv(
     'sentiment_analyzer_url',
     default="http://localhost:5050/")
 
-# def get_request(endpoint, **kwargs):
-# Add code for get requests to back end
 
-# def analyze_review_sentiments(text):
-# request_url = sentiment_analyzer_url+"analyze/"+text
-# Add code for retrieving sentiments
-
-# def post_review(data_dict):
-# Add code for posting review
 def get_request(endpoint, **kwargs):
     params = ""
     if(kwargs):
@@ -28,14 +21,32 @@ def get_request(endpoint, **kwargs):
 
     request_url = backend_url+endpoint+"?"+params
 
-    print("GET from {} ".format(request_url))
+   # Log the full URL to verify it's constructed correctly
+    print(f"Request URL: {request_url}")
+
     try:
-        # Call get method of requests library with URL and parameters
-        response = requests.get(request_url)
-        return response.json()
-    except:
-        # If any error occurs
-        print("Network exception occurred")
+        # Send the GET request and store the response
+        response = requests.get(request_url, timeout=10)  # Timeout after 10 seconds
+
+        # Check the HTTP response code
+        if response.status_code == 200:
+            return response.json()  # Return JSON if successful
+        else:
+            # If response is not successful, print the status code and return None
+            print(f"Error: Received status code {response.status_code}")
+            return None
+    except requests.exceptions.Timeout:
+        # Handle timeout explicitly
+        print("Timeout error: The request timed out.")
+        return None
+    except requests.exceptions.RequestException as e:
+        # Handle any other network-related error
+        print(f"Network exception: {e}")
+        return None
+    except Exception as e:
+        # Catch all for any other unexpected errors
+        print(f"Unexpected error: {e}")
+        return None
 
 def analyze_review_sentiments(text):
     request_url = sentiment_analyzer_url+"analyze/"+text

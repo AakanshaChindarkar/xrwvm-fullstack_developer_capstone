@@ -88,19 +88,6 @@ def registration(request):
         return JsonResponse(data)
 # ...
 
-# # Update the `get_dealerships` view to render the index page with
-# a list of dealerships
-# def get_dealerships(request):
-# ...
-
-# Create a `get_dealer_reviews` view to render the reviews of a dealer
-# def get_dealer_reviews(request,dealer_id):
-# ...
-
-# Create a `get_dealer_details` view to render the dealer details
-# def get_dealer_details(request, dealer_id):
-# ...
-
 # Create a `add_review` view to submit a review
 def add_review(request):
     if(request.user.is_anonymous == False):
@@ -116,10 +103,12 @@ def add_review(request):
 #Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
 def get_dealerships(request, state="All"):
     if(state == "All"):
-        endpoint = "/fetchDealers"
+        endpoint = "/fetchDealers/"
     else:
         endpoint = "/fetchDealers/"+state
     dealerships = get_request(endpoint)
+    print("Dealerships fetched:", dealerships)
+
     return JsonResponse({"status":200,"dealers":dealerships})
 
 
@@ -127,6 +116,8 @@ def get_dealer_details(request, dealer_id):
     if(dealer_id):
         endpoint = "/fetchDealer/"+str(dealer_id)
         dealership = get_request(endpoint)
+        print("Dealerships fetched:", dealerships)
+
         return JsonResponse({"status":200,"dealer":dealership})
     else:
         return JsonResponse({"status":400,"message":"Bad Request"})
